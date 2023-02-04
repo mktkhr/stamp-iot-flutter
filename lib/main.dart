@@ -1,7 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:frontend/views/login/login.dart';
+import 'dart:io';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:frontend/models/proxy.dart';
+import 'package:frontend/views/login/login.dart';
+import 'package:system_proxy/system_proxy.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // システムのproxy設定を取得する.
+  Map<String, String>? proxy = await SystemProxy.getProxySettings();
+  // HttpOverridesの派生クラスをHttpOverrides.globalに指定する.
+  HttpOverrides.global = ProxyHttpOverrides(
+    proxy?['host'],
+    proxy?['port'],
+  );
   runApp(const MyApp());
 }
 
@@ -45,10 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Color.fromRGBO(99, 99, 99, 100),
+        backgroundColor: const Color.fromRGBO(99, 99, 99, 100),
       ),
       body: Center(
-        child: Column(
+        child: SingleChildScrollView(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
@@ -59,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
-        ),
+        )),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
