@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/models/proxy.dart';
 import 'package:frontend/views/login/login.dart';
@@ -55,10 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Color.fromRGBO(99, 99, 99, 100),
+        backgroundColor: const Color.fromRGBO(99, 99, 99, 100),
       ),
       body: Center(
-        child: Column(
+        child: SingleChildScrollView(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
@@ -69,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
-        ),
+        )),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
