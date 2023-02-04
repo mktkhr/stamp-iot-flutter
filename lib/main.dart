@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/proxy.dart';
 import 'package:frontend/views/login/login.dart';
+import 'package:system_proxy/system_proxy.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // システムのproxy設定を取得する.
+  Map<String, String>? proxy = await SystemProxy.getProxySettings();
+  // HttpOverridesの派生クラスをHttpOverrides.globalに指定する.
+  HttpOverrides.global = ProxyHttpOverrides(
+    proxy?['host'],
+    proxy?['port'],
+  );
   runApp(const MyApp());
 }
 
