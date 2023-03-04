@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/views/login/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
@@ -11,7 +14,6 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +37,12 @@ class _Home extends State<Home> {
                         ),
                         ElevatedButton(
                           child: const Text("OK"),
-                          onPressed: () {
+                          onPressed: () async {
+                            final preferences =
+                                await SharedPreferences.getInstance();
+                            preferences.clear(); // セッション情報の削除
+
+                            if (!mounted) return;
                             Navigator.pop(context);
                             Navigator.pushReplacement(
                                 context,
