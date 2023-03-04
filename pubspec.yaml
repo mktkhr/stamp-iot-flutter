@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.5
   system_proxy: 0.1.0
+  shared_preferences: ^2.0.15
+  path:
 
 dev_dependencies:
   flutter_test:
