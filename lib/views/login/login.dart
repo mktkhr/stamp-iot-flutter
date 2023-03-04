@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class _Login extends State<Login> {
         backgroundColor: const Color.fromRGBO(99, 99, 99, 100),
         actions: [
           Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Image.asset(
                 "assets/images/logo_white.png",
                 fit: BoxFit.contain,
@@ -133,12 +134,26 @@ class _Login extends State<Login> {
 
                                     String statusCode =
                                         response.statusCode.toString();
-                                    log(statusCode);
+
                                     if (!mounted) {
                                       // contextがない場合はreturn
                                       return;
                                     }
                                     if (statusCode == "200") {
+                                      // ems_session=xxx の xxx の部分(UUID)を取得
+                                      final sessionId = response
+                                          .headers['set-cookie']
+                                          .toString()
+                                          .substring(12, 48);
+
+                                      // log('session ID: $sessionId');
+
+                                      final preferences =
+                                          await SharedPreferences.getInstance();
+                                      preferences.setString(
+                                          "ems_session", sessionId);
+
+                                      if (!mounted) return;
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
