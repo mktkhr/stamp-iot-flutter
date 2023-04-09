@@ -36,6 +36,16 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.5
   system_proxy: 0.1.0
+  shared_preferences: ^2.0.15
+  flutter_launcher_icons: ^0.13.0
+  intl: ^0.18.0
+  path:
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_blue_background.png"
+  adaptive_icon_background: "#ffffff"
 
 dev_dependencies:
   flutter_test:
