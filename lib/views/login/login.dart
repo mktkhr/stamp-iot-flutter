@@ -120,10 +120,12 @@ class _Login extends State<Login> {
                                   Map<String, String> header = {
                                     'content-type': 'application/json'
                                   };
+                                  const String apiUrl =
+                                      String.fromEnvironment("url");
+
                                   try {
                                     final response = await http.post(
-                                        Uri.parse(
-                                            'http://localhost:8082/ems/account/login'),
+                                        Uri.parse('$apiUrl/api/ems/account/login'),
                                         headers: header,
                                         body: json.encode({
                                           "email":

@@ -147,9 +147,10 @@ Future<List<MicroController>> fetchMicroController() async {
     'Cookie': 'ems_session=$sessionId'
   };
 
-  final response = await http.get(
-      Uri.parse('http://localhost:8082/ems/micro-controller/info'),
-      headers: header);
+  const String apiUrl = String.fromEnvironment("url");
+
+  final response = await http
+      .get(Uri.parse('$apiUrl/api/ems/micro-controller/info'), headers: header);
 
   List<MicroController> list = [];
   final responseList = json.decode(utf8.decode(response.bodyBytes)) as List;
