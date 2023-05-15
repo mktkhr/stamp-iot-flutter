@@ -159,7 +159,7 @@ class _Register extends State<Register> {
                           const String apiUrl = String.fromEnvironment("url");
                           try {
                             final response = await http.post(
-                                Uri.parse('$apiUrl/api/ems/account/register'),
+                                Uri.parse('$apiUrl/ems/account/register'),
                                 headers: header,
                                 body: json.encode({
                                   "email": emailInputFieldController.text,

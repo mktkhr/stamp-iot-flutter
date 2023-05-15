@@ -150,7 +150,7 @@ Future<List<MicroController>> fetchMicroController() async {
   const String apiUrl = String.fromEnvironment("url");
 
   final response = await http
-      .get(Uri.parse('$apiUrl/api/ems/micro-controller/info'), headers: header);
+      .get(Uri.parse('$apiUrl/ems/micro-controller/info'), headers: header);
 
   List<MicroController> list = [];
   final responseList = json.decode(utf8.decode(response.bodyBytes)) as List;

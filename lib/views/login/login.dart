@@ -125,7 +125,7 @@ class _Login extends State<Login> {
 
                                   try {
                                     final response = await http.post(
-                                        Uri.parse('$apiUrl/api/ems/account/login'),
+                                        Uri.parse('$apiUrl/ems/account/login'),
                                         headers: header,
                                         body: json.encode({
                                           "email":
