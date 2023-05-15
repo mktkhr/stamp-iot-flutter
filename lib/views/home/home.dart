@@ -169,7 +169,7 @@ Future<List<MicroController>> fetchMicroController() async {
           id = value;
           break;
         case 'name':
-          if (value != "") {
+          if (value != "" && value != null) {
             name = value;
           } else {
             name = "名前設定なし";
