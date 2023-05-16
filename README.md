@@ -1,16 +1,5 @@
-# frontend
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# 実機インストール手順
+- `flutter clean` (任意)
+- `flutter build ios --dart-define-from-file=dart_defines/prod.json` (インストールしたい環境に応じて読み込むjsonを変更する)
+- `flutter devices` (インストールしたい端末のid等を確認)
+- `flutter install -d ${id}`
