@@ -38,6 +38,7 @@ dependencies:
   system_proxy: 0.1.0
   shared_preferences: ^2.0.15
   flutter_launcher_icons: ^0.13.0
+  fl_chart: ^0.63.0
   intl: ^0.18.0
   path:
 
