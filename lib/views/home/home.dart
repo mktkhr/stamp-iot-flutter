@@ -1,8 +1,8 @@
-import 'dart:developer';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/views/login/login.dart';
+import 'package:frontend/views/measuredData/measuredData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -108,7 +108,17 @@ class _Home extends State<Home> {
                             leading: const Icon(Icons.person),
                             title: Text(snapshot.data![index].name),
                             subtitle: Text(snapshot.data![index].macAddress),
-                            onTap: () {},
+                            onTap: () {
+                              String uuid = snapshot.data![index].uuid;
+                              if (uuid.isEmpty) return;
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MeasuredData(
+                                            title: "測定結果",
+                                            microControllerUuid: uuid,
+                                          )));
+                            },
                           );
                         },
                       );
@@ -122,15 +132,17 @@ class _Home extends State<Home> {
 
 class MicroController {
   num id;
+  String uuid;
   String name;
   String macAddress;
-  num interval;
+  String interval;
   DateTime createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
 
   MicroController(
       {required this.id,
+      required this.uuid,
       required this.name,
       required this.macAddress,
       required this.interval,
@@ -147,17 +159,19 @@ Future<List<MicroController>> fetchMicroController() async {
     'Cookie': 'ems_session=$sessionId'
   };
 
-  final response = await http.get(
-      Uri.parse('http://localhost:8082/ems/micro-controller/info'),
-      headers: header);
+  const String apiUrl = String.fromEnvironment("url");
+
+  final response = await http
+      .get(Uri.parse('$apiUrl/ems/micro-controller/info'), headers: header);
 
   List<MicroController> list = [];
   final responseList = json.decode(utf8.decode(response.bodyBytes)) as List;
   for (var element in responseList) {
     late num id;
+    late String uuid;
     late String name;
     late String macAddress;
-    late num interval;
+    late String interval;
     late DateTime createdAt;
     DateTime? updatedAt;
     DateTime? deletedAt;
@@ -167,8 +181,11 @@ Future<List<MicroController>> fetchMicroController() async {
         case 'id':
           id = value;
           break;
+        case 'uuid':
+          uuid = value;
+          break;
         case 'name':
-          if (value != "") {
+          if (value != "" && value != null) {
             name = value;
           } else {
             name = "名前設定なし";
@@ -195,6 +212,7 @@ Future<List<MicroController>> fetchMicroController() async {
 
     MicroController microController = MicroController(
         id: id,
+        uuid: uuid,
         name: name,
         macAddress: macAddress,
         interval: interval,

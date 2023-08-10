@@ -156,10 +156,10 @@ class _Register extends State<Register> {
                           Map<String, String> header = {
                             'content-type': 'application/json'
                           };
+                          const String apiUrl = String.fromEnvironment("url");
                           try {
                             final response = await http.post(
-                                Uri.parse(
-                                    'http://localhost:8082/ems/account/register'),
+                                Uri.parse('$apiUrl/ems/account/register'),
                                 headers: header,
                                 body: json.encode({
                                   "email": emailInputFieldController.text,
