@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/views/login/login.dart';
 import 'package:frontend/views/measuredData/measuredData.dart';
+import 'package:frontend/views/microControllerDetail/microControllerDetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -106,6 +107,10 @@ class _Home extends State<Home> {
                         itemBuilder: (BuildContext context, index) {
                           return ListTile(
                             leading: const Icon(Icons.person),
+                            trailing: IconButton(
+                                icon: const Icon(Icons.settings),
+                                onPressed: () => onClickSetting(
+                                    context, snapshot.data![index].uuid)),
                             title: Text(snapshot.data![index].name),
                             subtitle: Text(snapshot.data![index].macAddress),
                             onTap: () {
@@ -223,4 +228,15 @@ Future<List<MicroController>> fetchMicroController() async {
   }
 
   return Future.value(list);
+}
+
+/// 設定ボタン押下時の処理
+void onClickSetting(BuildContext context, String uuid) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MicroControllerDetail(
+                title: "端末情報",
+                microControllerUuid: uuid,
+              )));
 }
