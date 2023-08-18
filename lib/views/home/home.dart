@@ -3,8 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/views/login/login.dart';
-import 'package:frontend/views/measuredData/measuredData.dart';
-import 'package:frontend/views/microControllerDetail/microControllerDetail.dart';
+import 'package:frontend/views/measuredData/measured_data.dart';
+import 'package:frontend/views/microControllerDetail/micro_controller_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
