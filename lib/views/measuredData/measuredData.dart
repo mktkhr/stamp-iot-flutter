@@ -175,9 +175,7 @@ class _MeasuredData extends State<MeasuredData> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      child: const Text("表示する項目"),
-                    ),
+                    const Text("表示する項目"),
                     const Padding(padding: EdgeInsets.all(10)),
                     Container(
                       padding: const EdgeInsets.only(left: 10),
@@ -334,8 +332,8 @@ LineChartData mainData(MeasuredDataState? measuredDataState, bool sdiChart,
       // グラフのタイトル設定
       titlesData: FlTitlesData(
         show: true, // タイトルの有無
-        rightTitles: AxisTitles(),
-        topTitles: AxisTitles(),
+        rightTitles: const AxisTitles(),
+        topTitles: const AxisTitles(),
         // 下側のタイトル設定
         bottomTitles: const AxisTitles(
           // タイトル名
@@ -351,7 +349,6 @@ LineChartData mainData(MeasuredDataState? measuredDataState, bool sdiChart,
             showTitles: true, // サイドタイトルの有無
             interval: 1.0, // サイドタイトルの表示間隔
             reservedSize: 50.0, // サイドタイトルの表示エリアの幅
-            //getTitlesWidget: bottomTitleWidgets, // サイドタイトルの表示内容
           ),
         ),
         leftTitles: AxisTitles(
@@ -378,12 +375,6 @@ LineChartData mainData(MeasuredDataState? measuredDataState, bool sdiChart,
           color: const Color(0xff37434d),
         ),
       ),
-
-      // グラフのx軸y軸のの表示数(最大値)
-      // minX: 0.0,
-      // maxX: 6.0,
-      // minY: 0.0,
-      // maxY: 6.0,
       lineBarsData:
           generateChartDate(measuredDataState!, sdiChart, selectedVariable));
 }
@@ -392,65 +383,74 @@ LineChartData mainData(MeasuredDataState? measuredDataState, bool sdiChart,
 List<LineChartBarData> generateChartDate(
     MeasuredDataState state, bool showSdiChart, String selectedVariable) {
   if (showSdiChart) {
-    return state.sdi12Data.map<LineChartBarData>((Sdi12DataState state) {
-      return LineChartBarData(
-        // 表示する座標のリスト
-        spots: state.dataList
-            .map((Sdi12Data sdi12data) =>
-                generateSdiData(sdi12data, selectedVariable))
-            .toList(),
-        // チャート線を曲線にするか折れ線にするか
-        isCurved: false,
-        barWidth: 1.0, // チャート線幅
-        isStrokeCapRound: false, // チャート線の開始と終了がQubicかRoundか（？）
-        dotData: FlDotData(
-          show: true, // 座標にドット表示の有無
-          // ドットの詳細設定
-          getDotPainter: (spot, percent, barData, index) =>
-              // ドットの詳細設定
-              FlDotCirclePainter(
-            radius: 2.0,
-            color: Colors.blue,
-            strokeWidth: 2.0,
-            strokeColor: Colors.blue,
+    if (state.sdi12Data != null && state.sdi12Data!.isNotEmpty) {
+      return state.sdi12Data!.map<LineChartBarData>((Sdi12DataState state) {
+        return LineChartBarData(
+          // 表示する座標のリスト
+          spots: state.dataList
+              .map((Sdi12Data sdi12data) =>
+                  generateSdiData(sdi12data, selectedVariable))
+              .toList(),
+          // チャート線を曲線にするか折れ線にするか
+          isCurved: false,
+          barWidth: 1.0, // チャート線幅
+          isStrokeCapRound: false,
+          dotData: FlDotData(
+            show: true, // 座標にドット表示の有無
+            // ドットの詳細設定
+            getDotPainter: (spot, percent, barData, index) =>
+                // ドットの詳細設定
+                FlDotCirclePainter(
+              radius: 2.0,
+              color: Colors.blue,
+              strokeWidth: 2.0,
+              strokeColor: Colors.blue,
+            ),
           ),
-        ),
-        // チャート線下部に色を付ける場合の設定
-        belowBarData: BarAreaData(
-          show: false,
-        ),
-      );
-    }).toList();
+          // チャート線下部に色を付ける場合の設定
+          belowBarData: BarAreaData(
+            show: false,
+          ),
+        );
+      }).toList();
+    } else {
+      return [LineChartBarData()];
+    }
   } else {
-    return [
-      LineChartBarData(
-        // 表示する座標のリスト
-        spots: state.environmentalData
-            .map<FlSpot>((EnvironmentalDataState state) =>
-                generateEnvironmentData(state, selectedVariable))
-            .toList(),
-        // チャート線を曲線にするか折れ線にするか
-        isCurved: false,
-        barWidth: 1.0, // チャート線幅
-        isStrokeCapRound: false, // チャート線の開始と終了がQubicかRoundか（？）
-        dotData: FlDotData(
-          show: true, // 座標にドット表示の有無
-          // ドットの詳細設定
-          getDotPainter: (spot, percent, barData, index) =>
-              // ドットの詳細設定
-              FlDotCirclePainter(
-            radius: 2.0,
-            color: Colors.blue,
-            strokeWidth: 2.0,
-            strokeColor: Colors.blue,
+    if (state.environmentalData != null &&
+        state.environmentalData!.isNotEmpty) {
+      return [
+        LineChartBarData(
+          // 表示する座標のリスト
+          spots: state.environmentalData!
+              .map<FlSpot>((EnvironmentalDataState state) =>
+                  generateEnvironmentData(state, selectedVariable))
+              .toList(),
+          // チャート線を曲線にするか折れ線にするか
+          isCurved: false,
+          barWidth: 1.0, // チャート線幅
+          isStrokeCapRound: false,
+          dotData: FlDotData(
+            show: true, // 座標にドット表示の有無
+            // ドットの詳細設定
+            getDotPainter: (spot, percent, barData, index) =>
+                // ドットの詳細設定
+                FlDotCirclePainter(
+              radius: 2.0,
+              color: Colors.blue,
+              strokeWidth: 2.0,
+              strokeColor: Colors.blue,
+            ),
           ),
-        ),
-        // チャート線下部に色を付ける場合の設定
-        belowBarData: BarAreaData(
-          show: false,
-        ),
-      )
-    ];
+          // チャート線下部に色を付ける場合の設定
+          belowBarData: BarAreaData(
+            show: false,
+          ),
+        )
+      ];
+    } else {
+      return [LineChartBarData()];
+    }
   }
 }
 
@@ -459,28 +459,47 @@ FlSpot generateSdiData(Sdi12Data sdiData, String targetSdiVariable) {
   switch (targetSdiVariable) {
     case "体積含水率":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.vwc!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse(
+              (sdiData.vwc != "" && sdiData.vwc != null ? sdiData.vwc! : "0")));
     case "バルク比誘電率":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.brp!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse(
+              (sdiData.brp != "" && sdiData.brp != null ? sdiData.brp! : "0")));
     case "地温":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.soilTemp!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse((sdiData.soilTemp != "" && sdiData.soilTemp != null
+              ? sdiData.soilTemp!
+              : "0")));
     case "バルク電気電動度":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.sbec!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse((sdiData.sbec != "" && sdiData.sbec != null
+              ? sdiData.sbec!
+              : "0")));
     case "土壌感間隙水電気伝導度":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.spwec!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse((sdiData.spwec != "" && sdiData.spwec != null
+              ? sdiData.spwec!
+              : "0")));
     case "重力加速度(X)":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.gax!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse(
+              (sdiData.gax != "" && sdiData.gax != null ? sdiData.gax! : "0")));
     case "重力加速度(Y)":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.gay!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse(
+              (sdiData.gay != "" && sdiData.gay != null ? sdiData.gay! : "0")));
     case "重力加速度(Z)":
       return FlSpot(
-          double.parse(sdiData.dayOfYear!), double.parse((sdiData.gaz!)));
+          double.parse(sdiData.dayOfYear ?? "0"),
+          double.parse(
+              (sdiData.gaz != "" && sdiData.gaz != null ? sdiData.gaz! : "0")));
     default:
       return const FlSpot(0, 0);
   }
@@ -492,19 +511,37 @@ FlSpot generateEnvironmentData(
   switch (targetEnvironmentVariable) {
     case "大気圧":
       return FlSpot(
-          double.parse(state.dayOfYear), double.parse((state.airPress!)));
+          double.parse(state.dayOfYear ?? "0"),
+          double.parse((state.airPress != "" && state.airPress != null
+              ? state.airPress!
+              : "0")));
     case "気温":
-      return FlSpot(double.parse(state.dayOfYear), double.parse((state.temp!)));
+      return FlSpot(
+          double.parse(state.dayOfYear ?? "0"),
+          double.parse(
+              (state.temp != "" && state.temp != null ? state.temp! : "0")));
     case "相対湿度":
-      return FlSpot(double.parse(state.dayOfYear), double.parse((state.humi!)));
+      return FlSpot(
+          double.parse(state.dayOfYear ?? "0"),
+          double.parse(
+              (state.humi != "" && state.humi != null ? state.humi! : "0")));
     case "二酸化炭素濃度":
       return FlSpot(
-          double.parse(state.dayOfYear), double.parse((state.co2Concent!)));
+          double.parse(state.dayOfYear ?? "0"),
+          double.parse((state.co2Concent != "" && state.co2Concent != null
+              ? state.co2Concent!
+              : "0")));
     case "揮発性有機化合物":
-      return FlSpot(double.parse(state.dayOfYear), double.parse((state.tvoc!)));
+      return FlSpot(
+          double.parse(state.dayOfYear ?? "0"),
+          double.parse(
+              (state.tvoc != "" && state.tvoc != null ? state.tvoc! : "0")));
     case "アナログ値(X)":
       return FlSpot(
-          double.parse(state.dayOfYear), double.parse((state.analogValue!)));
+          double.parse(state.dayOfYear ?? "0"),
+          double.parse((state.analogValue != "" && state.analogValue != null
+              ? state.analogValue!
+              : "0")));
     default:
       return const FlSpot(0, 0);
   }
@@ -512,7 +549,7 @@ FlSpot generateEnvironmentData(
 
 /// SDI-12のデータクラス
 class Sdi12Data {
-  num? measuredDataMasterId;
+  num measuredDataMasterId;
   String? dayOfYear;
   String? vwc;
   String? soilTemp;
@@ -547,8 +584,6 @@ class Sdi12DataState {
   String sdiAddress;
   List<Sdi12Data> dataList;
 
-  Sdi12DataState({required this.sdiAddress, required this.dataList});
-
   Sdi12DataState.fromJson(Map<String, dynamic> json)
       : sdiAddress = json["sdiAddress"],
         dataList = json["dataList"]
@@ -559,18 +594,11 @@ class Sdi12DataState {
 /// 電圧データクラス
 class VoltageDataState {
   num measuredDataMasterId;
-  String dayOfYear;
-  String voltage;
-  String createdAt;
-  String updatedAt;
+  String? dayOfYear;
+  String? voltage;
+  String? createdAt;
+  String? updatedAt;
   String? deletedAt;
-  VoltageDataState(
-      {required this.measuredDataMasterId,
-      required this.dayOfYear,
-      required this.voltage,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.deletedAt});
 
   VoltageDataState.fromJson(Map<String, dynamic> json)
       : measuredDataMasterId = json["measuredDataMasterId"],
@@ -584,28 +612,16 @@ class VoltageDataState {
 /// 環境データクラス
 class EnvironmentalDataState {
   num measuredDataMasterId;
-  String dayOfYear;
+  String? dayOfYear;
   String? airPress;
   String? temp;
   String? humi;
   String? co2Concent;
   String? tvoc;
   String? analogValue;
-  String createdAt;
-  String updatedAt;
+  String? createdAt;
+  String? updatedAt;
   String? deletedAt;
-  EnvironmentalDataState(
-      {required this.measuredDataMasterId,
-      required this.dayOfYear,
-      required this.airPress,
-      required this.temp,
-      required this.humi,
-      required this.co2Concent,
-      required this.tvoc,
-      required this.analogValue,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.deletedAt});
 
   EnvironmentalDataState.fromJson(Map<String, dynamic> json)
       : measuredDataMasterId = json["measuredDataMasterId"],
@@ -623,9 +639,9 @@ class EnvironmentalDataState {
 
 /// 測定データクラス
 class MeasuredDataState {
-  List<Sdi12DataState> sdi12Data;
-  List<EnvironmentalDataState> environmentalData;
-  List<VoltageDataState> voltageData;
+  List<Sdi12DataState>? sdi12Data;
+  List<EnvironmentalDataState>? environmentalData;
+  List<VoltageDataState>? voltageData;
   MeasuredDataState(
       {required this.sdi12Data,
       required this.environmentalData,
