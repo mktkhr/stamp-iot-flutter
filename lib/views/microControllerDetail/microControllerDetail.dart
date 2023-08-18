@@ -39,8 +39,8 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
 
   void changeEditMode() {
     setState(() {
-      nameInputFieldController.text = microController!.name;
-      sdiAddressInputFieldController.text = microController!.sdi12Address;
+      nameInputFieldController.text = microController!.name ?? "";
+      sdiAddressInputFieldController.text = microController!.sdi12Address ?? "";
       microControllerForEdit = microController;
       isEditMode = !isEditMode;
     });
@@ -116,15 +116,33 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                 }
                 if (snapshot.hasData &&
                     snapshot.connectionState == ConnectionState.done) {
-                  String name = snapshot.data!.name;
+                  String name = snapshot.data!.name ?? "";
                   String macAddress = snapshot.data!.macAddress;
                   String interval = snapshot.data!.interval;
-                  String sdi12Address = snapshot.data!.sdi12Address;
+                  String sdi12Address = snapshot.data!.sdi12Address ?? "";
+
                   final dateTimeFormatter = DateFormat("yyyy/MM/dd");
-                  DateTime createdAt = DateTime.parse(snapshot.data!.createdAt);
-                  String createdAtString = dateTimeFormatter.format(createdAt);
-                  DateTime updatedAt = DateTime.parse(snapshot.data!.updatedAt);
-                  String updatedAtString = dateTimeFormatter.format(updatedAt);
+
+                  String createdAt = "";
+                  try {
+                    createdAt = snapshot.data!.createdAt != null
+                        ? dateTimeFormatter
+                            .format(DateTime.parse(snapshot.data!.createdAt!))
+                        : "";
+                  } catch (e) {
+                    log("ParseError:${e.toString()}");
+                  }
+
+                  String updatedAt = "";
+                  try {
+                    updatedAt = snapshot.data!.updatedAt != null
+                        ? dateTimeFormatter
+                            .format(DateTime.parse(snapshot.data!.updatedAt!))
+                        : "";
+                  } catch (e) {
+                    log("ParseError:${e.toString()}");
+                  }
+
                   if (isEditMode) {
                     return Form(
                         key: formKey,
@@ -144,10 +162,6 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      log(nameInputFieldController.text);
-                                      log(sdiAddressInputFieldController.text);
-                                      log(microControllerForEdit!.interval
-                                          .toString());
                                       if (!formKey.currentState!.validate()) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -208,6 +222,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                             });
                                           } else if (statusCode == "400" ||
                                               statusCode == "401") {
+                                            log("Error StatusCode: $statusCode");
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               const SnackBar(
@@ -215,6 +230,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                                       Text('入力内容に誤りがあります。')),
                                             );
                                           } else if (statusCode == "500") {
+                                            log("Error StatusCode: $statusCode");
                                             // #8 catchで拾えているかの確認が取れるまで，重複するが拾えるようにする
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
@@ -225,6 +241,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                           }
                                         } catch (exception) {
                                           log("Error: ${exception.toString()}");
+                                          if (!mounted) return;
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
@@ -339,7 +356,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                       // initialValue: sdi12Address,
                                       validator: (value) {
                                         String sdiAddressRegExp =
-                                            r"^(([0-9A-Za-z]{1},)*[0-9A-za-z]{1})|([0-9A-za-z]{1})$";
+                                            r"(([0-9A-Za-z]{1},)*[0-9A-za-z]{1})|([0-9A-za-z]{1})?";
                                         RegExp regExp =
                                             RegExp(sdiAddressRegExp);
                                         if (value != null &&
@@ -364,7 +381,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                     alignment: Alignment.center,
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      createdAtString,
+                                      createdAt,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -380,7 +397,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                     alignment: Alignment.center,
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      updatedAtString,
+                                      updatedAt,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -493,7 +510,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  createdAtString,
+                                  createdAt,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -509,7 +526,7 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  updatedAtString,
+                                  updatedAt,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -522,7 +539,14 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
                   }
                 } else {
                   log(snapshot.error.toString());
-                  return const Text("データの取得に失敗しました。");
+                  return const Column(children: [
+                    SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: Text("データの取得に失敗しました。"),
+                      ),
+                    ),
+                  ]);
                 }
               })),
     );
@@ -532,23 +556,23 @@ class _MicroControllerDetail extends State<MicroControllerDetail> {
 class MicroController {
   num id;
   String uuid;
-  String name;
+  String? name;
   String macAddress;
   String interval;
-  String sdi12Address;
-  String createdAt;
-  String updatedAt;
+  String? sdi12Address;
+  String? createdAt;
+  String? updatedAt;
   String? deletedAt;
 
   MicroController(
       {required this.id,
       required this.uuid,
-      required this.name,
+      this.name,
       required this.macAddress,
       required this.interval,
-      required this.sdi12Address,
-      required this.createdAt,
-      required this.updatedAt,
+      this.sdi12Address,
+      this.createdAt,
+      this.updatedAt,
       this.deletedAt});
 
   MicroController.fromJson(Map<String, dynamic> json)
