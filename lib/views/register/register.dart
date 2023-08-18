@@ -50,7 +50,7 @@ class _Register extends State<Register> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  child: Container(
+                  child: SizedBox(
                       height: 50,
                       child: Center(
                         child: Image.asset(
@@ -208,17 +208,6 @@ class _Register extends State<Register> {
                                   content: Text('問題が発生しました。時間をおいて再度お試しください。')),
                             );
                           }
-                          //     .then((value) {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     const SnackBar(
-                          //         content: Text('登録に成功しました。再度ログインしてください。')),
-                          //   );
-                          //   Navigator.pushReplacement(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //           builder: (context) =>
-                          //               const Login(title: "ログイン")));
-                          // });
                         }
                       },
                       style: ButtonStyle(

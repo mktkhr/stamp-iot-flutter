@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/views/login/login.dart';
-import 'package:frontend/views/measuredData/measuredData.dart';
-import 'package:frontend/views/microControllerDetail/microControllerDetail.dart';
+import 'package:frontend/views/measuredData/measured_data.dart';
+import 'package:frontend/views/microControllerDetail/micro_controller_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -101,6 +102,7 @@ class _Home extends State<Home> {
                       );
                     }
                     if (snapshot.hasData &&
+                        snapshot.data!.isNotEmpty &&
                         snapshot.connectionState == ConnectionState.done) {
                       return ListView.builder(
                         itemCount: snapshot.data!.length,
@@ -111,7 +113,7 @@ class _Home extends State<Home> {
                                 icon: const Icon(Icons.settings),
                                 onPressed: () => onClickSetting(
                                     context, snapshot.data![index].uuid)),
-                            title: Text(snapshot.data![index].name),
+                            title: Text(snapshot.data![index].name ?? "名称未設定"),
                             subtitle: Text(snapshot.data![index].macAddress),
                             onTap: () {
                               String uuid = snapshot.data![index].uuid;
@@ -127,8 +129,27 @@ class _Home extends State<Home> {
                           );
                         },
                       );
+                    } else if (snapshot.data!.isEmpty &&
+                        snapshot.connectionState == ConnectionState.done) {
+                      // マイコンがない場合
+                      return const Column(children: [
+                        SizedBox(
+                          height: 50,
+                          child: Center(
+                            child: Text("端末が登録されていません。"),
+                          ),
+                        ),
+                      ]);
                     } else {
-                      return Text(snapshot.error.toString());
+                      log(snapshot.error.toString());
+                      return const Column(children: [
+                        SizedBox(
+                          height: 50,
+                          child: Center(
+                            child: Text("予期せぬエラーが発生しました。"),
+                          ),
+                        ),
+                      ]);
                     }
                   }))),
     );
@@ -138,21 +159,21 @@ class _Home extends State<Home> {
 class MicroController {
   num id;
   String uuid;
-  String name;
+  String? name;
   String macAddress;
   String interval;
-  DateTime createdAt;
+  DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
 
   MicroController(
       {required this.id,
       required this.uuid,
-      required this.name,
+      this.name,
       required this.macAddress,
       required this.interval,
-      required this.createdAt,
-      required this.updatedAt,
+      this.createdAt,
+      this.updatedAt,
       this.deletedAt});
 }
 
@@ -174,10 +195,10 @@ Future<List<MicroController>> fetchMicroController() async {
   for (var element in responseList) {
     late num id;
     late String uuid;
-    late String name;
+    String? name;
     late String macAddress;
     late String interval;
-    late DateTime createdAt;
+    DateTime? createdAt;
     DateTime? updatedAt;
     DateTime? deletedAt;
 
@@ -193,7 +214,7 @@ Future<List<MicroController>> fetchMicroController() async {
           if (value != "" && value != null) {
             name = value;
           } else {
-            name = "名前設定なし";
+            name = "名称未設定";
           }
           break;
         case 'macAddress':
@@ -203,13 +224,31 @@ Future<List<MicroController>> fetchMicroController() async {
           interval = value;
           break;
         case 'createdAt':
-          createdAt = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value);
+          if (value != "" && value != null) {
+            try {
+              createdAt = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value);
+            } catch (e) {
+              log("ParseError:${e.toString()}");
+            }
+          }
           break;
         case 'updatedAt':
-          updatedAt = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value);
+          if (value != "" && value != null) {
+            try {
+              updatedAt = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value);
+            } catch (e) {
+              log("ParseError:${e.toString()}");
+            }
+          }
           break;
         case 'deletedAt':
-          deletedAt = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value);
+          if (value != "" && value != null) {
+            try {
+              deletedAt = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value);
+            } catch (e) {
+              log("ParseError:${e.toString()}");
+            }
+          }
           break;
         default:
       }
