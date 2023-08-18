@@ -19,7 +19,7 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   bool _isObscure = true;
 
-  final _formkey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   final emailInputFieldController = TextEditingController();
   final passwordInputFieldController = TextEditingController();
 
@@ -43,14 +43,14 @@ class _Login extends State<Login> {
         child: Container(
           padding: const EdgeInsets.all(30.0),
           child: Form(
-            key: _formkey,
+            key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  child: Container(
+                  child: SizedBox(
                       height: 50,
                       child: Center(
                         child: Image.asset(
@@ -109,7 +109,7 @@ class _Login extends State<Login> {
                 Center(
                   child: ElevatedButton(
                       onPressed: () async {
-                        if (!_formkey.currentState!.validate()) {
+                        if (!formKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('入力値に誤りがあります')),
                           );
