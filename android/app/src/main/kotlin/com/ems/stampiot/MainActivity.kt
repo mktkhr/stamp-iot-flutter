@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.ems.stampiot
 
 import io.flutter.embedding.android.FlutterActivity
 
